@@ -90,10 +90,22 @@ class Yourcode
 
 	public static function a($R,$O) {
 		$ol = SignYour::strlen($O);
-		for($t = 0; $t < $ol;$t += 3){
+		for($t = 0; $t < $ol;$t += 3) {
+
+			// $a = SignYour::charAt($O, $t + 2);
+			// $a = (strcmp($a, "a") >= 0) ? SignYour::ord($a) - 87 : ord($a);
+			// $a = '+' === $O{$t + 1} ? SignYour::unsignedRightShift($R, $a) : $R << $a;
+			// $R = '+' === $O{$t} ? $R + $a & 4294967295 : $R ^ $a;
+
+			// var a = o.charAt(t + 2);
+	  //       a = a >= "a" ? a.charCodeAt(0) - 87 : Number(a);
+	  //       a = "+" === o.charAt(t + 1) ? r >>> a : r << a;
+	  //       r = "+" === o.charAt(t) ? r + a & 4294967295 : r ^ a;
+
 			$a = $O{$t + 2};
-			$a = (strcmp($a, "a") >= 0) ? SignYour::ord($a) - 87 : ord($a);
-			if ($a == 54) $a = 6; 
+			// lo('bi',$a);
+			$a = (strcmp($a, "a") >= 0) ? SignYour::ord($a) - 87 : intval($a);
+			// lo('bb',$a);
 			$a = '+' === $O{$t + 1} ? SignYour::unsignedRightShift($R, $a) : $R << $a;
 			$R = '+' === $O{$t} ? $R + $a & 4294967295 : $R ^ $a;
 		}
@@ -101,7 +113,8 @@ class Yourcode
 		return $R;
 	}
 
-	public static function testA() {
+	public static function testA() 
+	{
 		$arr[] = [320533, "+-a^+6", 333147381];
 		$arr[] = [333147568, "+-a^+6", -2087426810];
 		$arr[] = [-2087426672, "+-a^+6", -696381690];
@@ -116,115 +129,127 @@ class Yourcode
 			echo "{$a[0]} | {$a[1]} = [{$a[2]} , $rr]<br>";
 		}
 	}
+
+	public static function hash($r, $_gtk) 
+	{
+
+		$r_len = SignYour::strlen($r);
+
+		if ($r_len > 30) {
+			$c1 = SignYour::substr($r, 0 , 10);
+			$c2 = floor($r_len / 2) - 5;
+			$c3 = SignYour::substr($r, $c2 , 10);
+			$c4 = SignYour::substr($r, -10 , 10);
+			$r = "{$c1}{$c3}{c4}";
+		}
+
+		// echo $r, '<br>';
+
+		if (Yourcode::$C === null) {
+			Yourcode::$C = $_gtk;
+		}
+
+		$t = Yourcode::$C !== null ? Yourcode::$C : "";
+
+		// echo $t, '|' , Yourcode::$C , '<br>';
+
+		$e = explode(".", $t);
+		$h = intval($e[0]);
+		if (!$h) $h = 0;
+		$i = intval($e[1]);
+		if (!$i) $i = 0;	
+		$d = [];
+		$f = 0;
+		$g = 0;
+
+		// lo($e,$h,$i,$d,$f,$g);
+
+		for (; $g < $r_len; $g ++) {
+
+			$char = SignYour::charAt($r,$g);
+	        $m = SignYour::ord($char);
+
+	        if (128 > $m) {
+	        	$d[$f++] = $m;
+	        }
+	        else {
+
+	        	if (2048 > $m) {
+	        		$d[$f++] = $m >> 6 | 192;
+	        	}
+	        	else {
+	        		$char0 = SignYour::charAt($r,$g+1);
+	        		$rcode0 = SignYour::ord($char0);
+
+	        		$xxx = 55296 === (64512 & $m) && $g + 1 < r_len && 56320 === (64512 & $rcode0);
+
+	        		if ($xxx) {
+	        			$char1 = SignYour::charAt($r,++$g);
+	        			$rcode1 = SignYour::ord($char1);
+
+		        		$m = 65536 + ((1023 & $m) << 10) + (1023 & $rcode1);
+					    $d[$f++] = $m >> 18 | 240;
+					    $d[$f++] = $m >> 12 & 63 | 128;
+	        		}
+	        		else {
+	        			$d[$f++] = $m >> 12 | 224;
+	        		}
+
+	        		$d[$f++] = $m >> 6 & 63 | 128;
+	        	}
+
+		        $d[$f++] = 63 & $m | 128;
+		    }
+		}
+
+		// lo($d,$f,$m,$r_len,$g);
+
+		$S = $h;
+		$u = "+-a^+6";
+		$l = "+-3^+b+-f";
+		$s = 0;
+
+		for (; $s < count($d); $s++) {
+			$S += $d[$s];
+	        $S = Yourcode::a($S, $u);
+		}
+
+		// lo($S,$s,$l,$u);
+		// lo('QQ',$S,$l);
+		$S = (string) $S;
+		$S = Yourcode::a($S, $l);
+		// -314211432
+
+		// lo('m',$S);
+		$S ^= $i;
+		// lo('n',$S,$i);
+		if (0 > $S) {
+			$S = (2147483647 & $S) + 2147483648;
+		}
+		// lo('vv',$S);
+	    // $S %= 1e6;
+	    $S = bcmod("{$S}", 1e6);
+
+	    // lo('v1',$S, 1e6,3935719145+1,3935719141+1);
+	    $vvv = $S ^ $h;
+	    $cc = (string) $S;
+
+	    $gg = $cc . '.' . $vvv;
+
+	    // lo($gg);
+
+		// echo '<hr>';
+		return $gg;
+	}
+
+	public static function testHash()
+	{
+		echo self::hash('今天天fff气fff怎么样', '320305.131321201') . '<hr>';
+	}
 }
 
-Yourcode::testA();
-
-function lhash($r, $_gtk) {
-
-	$r_len = SignYour::strlen($r);
-
-	if ($r_len > 30) {
-		$c1 = SignYour::substr($r, 0 , 10);
-		$c2 = floor($r_len / 2) - 5;
-		$c3 = SignYour::substr($r, $c2 , 10);
-		$c4 = SignYour::substr($r, -10 , 10);
-		$r = "{$c1}{$c3}{c4}";
-	}
-
-	echo $r, '<br>';
-
-	if (Yourcode::$C === null) {
-		Yourcode::$C = $_gtk;
-	}
-
-	$t = Yourcode::$C !== null ? Yourcode::$C : "";
-
-	// echo $t, '|' , Yourcode::$C , '<br>';
-
-	$e = explode(".", $t);
-	$h = intval($e[0]);
-	if (!$h) $h = 0;
-	$i = intval($e[1]);
-	if (!$i) $i = 0;	
-	$d = [];
-	$f = 0;
-	$g = 0;
-
-	lo($e,$h,$i,$d,$f,$g);
-
-	for (; $g < $r_len; $g ++) {
-
-		$char = SignYour::charAt($r,$g);
-        $m = SignYour::ord($char);
-
-        if (128 > $m) {
-        	$d[$f++] = $m;
-        }
-        else {
-
-        	if (2048 > $m) {
-        		$d[$f++] = $m >> 6 | 192;
-        	}
-        	else {
-        		$char0 = SignYour::charAt($r,$g+1);
-        		$rcode0 = SignYour::ord($char0);
-
-        		$xxx = 55296 === (64512 & $m) && $g + 1 < r_len && 56320 === (64512 & $rcode0);
-
-        		if ($xxx) {
-        			$char1 = SignYour::charAt($r,++$g);
-        			$rcode1 = SignYour::ord($char1);
-
-	        		$m = 65536 + ((1023 & $m) << 10) + (1023 & $rcode1);
-				    $d[$f++] = $m >> 18 | 240;
-				    $d[$f++] = $m >> 12 & 63 | 128;
-        		}
-        		else {
-        			$d[$f++] = $m >> 12 | 224;
-        		}
-
-        		$d[$f++] = $m >> 6 & 63 | 128;
-        	}
-
-	        $d[$f++] = 63 & $m | 128;
-	    }
-	}
-
-	// lo($d,$f,$m,$r_len,$g);
-
-	$S = $h;
-	$u = "+-a^+6";
-	$l = "+-3^+b+-f";
-	$s = 0;
-
-	for (; $s < count($d); $s++) {
-		$S += $d[$s];
-        $S = Yourcode::a($S, $u);
-	}
-
-	// lo($S,$s,$l,$u);
-	
-	$S = Yourcode::a($S, $l);
-	// -314211432
-
-	lo('m',$S,$l);
-	$S ^= $i;
-	lo('n',$S,$i);
-	if ($S > 0) {
-		$S = (2147483647 & $S) + 2147483648;
-	}
-    $S %= 1e6;
-
-    $vvv = $S ^ $h;
-    $cc = (string) $S;
-
-    $gg = $cc . '.' . $vvv;
-
-    lo($gg);
-
-	echo '<hr>';
-}
+// Yourcode::testA();
+Yourcode::testHash();
 
 function lo()
 {
@@ -235,8 +260,6 @@ function lo()
 	}
 	echo '<br>';
 }
-
-lhash('今天天气怎么样', '320305.131321201');
 ?>
 <script type="text/javascript">
 var C = null;
@@ -313,14 +336,15 @@ var hash = function(r, _gtk) {
     // }
 
     var ccc = function () {
+    	console.log('QQ',S,l)
     	S = a(S, l)
-    	console.warn('m',S,l)
+    	console.warn('m',S)
 	    S ^= i
 	    console.warn('n',S,i)
 	    0 > S && (S = (2147483647 & S) + 2147483648)
-	    console.warn(S)
+	    console.warn('vv',S)
 	    S %= 1e6
-	    console.warn(S)
+	    console.warn('v1',S)
 
 	    v = S.toString() + "." + (S ^ h)
 	    console.warn(v, S)
@@ -338,14 +362,21 @@ function a(r, o) {
     var cc = [r,o];
     for (var t = 0; t < o.length - 2; t += 3) {
         var a = o.charAt(t + 2);
+        // console.warn('bi',a);
         a = a >= "a" ? a.charCodeAt(0) - 87 : Number(a);
+        // console.warn('bb', a);
         a = "+" === o.charAt(t + 1) ? r >>> a : r << a;
         r = "+" === o.charAt(t) ? r + a & 4294967295 : r ^ a;
     }
+    // console.log(r)
     return r
 }
 
-var gtk = '320305.131321201', content = '今天天气怎么样'
+
+
+// a (320533, "+-a^+6")
+
+var gtk = '320305.131321201', content = '今天天fff气fff怎么样'
 var res = hash(content, gtk)
 console.log('gtk=' + gtk)
 console.log('res=' + res + ', content=' + content)
