@@ -8,6 +8,11 @@
 class Arrays
 {
 
+    public static function val($arr, $key, $defaults= null)
+    {
+        return isset($arr[$key]) ? $arr[$key] : $defaults;
+    }
+
     /**
      * 对字符串或数组进行格式化，返回格式化后的数组
      *

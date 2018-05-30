@@ -14,6 +14,7 @@ class P
 	static $clientIp = '127.0.0.1';
 
 	static $aliveProxyData = array();
+	static $htCacheData = array();
 
 	static $rulers = array();
 
@@ -33,8 +34,7 @@ class P
 	}
 
     static function curl($proxy, $method, $url, $params = array(), $headers = array(), $timeout = 10)
-    {
-    	
+    {    	
         Unirest_Request::verifyPeer(false);
         if ($timeout) {
             Unirest_Request::timeout($timeout);// 修正缺省超时时间
@@ -84,8 +84,13 @@ class P
             P::dump($debugInfo);
         }
 
-        return $response->raw_body;
+        return $response;
     }
+
+    static function sqlMonitor($sql, $dsnId)
+	{
+		self::outputln("[sql]: {$sql}");
+	}
 
     static function proxyConfig($address, $port = 1080, $type = CURLPROXY_HTTP, $tunnel = false)
     {
@@ -113,7 +118,9 @@ class P
     	$data = [];
 
     	try {
-    		$body = self::curl(false, 'get', $url, $params, array(), 10);
+    		$response = self::curl(false, 'get', $url, $params, array(), 10);
+
+    		$body = $response->raw_body;
 
     		if (!empty($body)) {
     			$data = Arrays::normalize($body, "\n");
@@ -123,7 +130,7 @@ class P
     	}
     	catch(Exception $ex) {
     		self::outputln(__METHOD__. ':' . __LINE__);
-    		self::outputln('Error: ' . $ex->getMessage());
+    		self::outputln("Error: curl {$url}" . $ex->getMessage());
     	}
 
     	return $data;
@@ -194,8 +201,30 @@ class P
     	return false;
     }
 
+    static function cleanHtCache()
+    {
+    	self::$htCacheData = array();
+    }
+
+    static function remove6hData()
+    {
+    	$ltTime = time() - 21600;
+    	$ltDate = date('Y-m-d H:i:s', $ltTime);
+
+    	$cond = array(
+    			'status'	=> 1,
+    			'updated_at'	=> array($ltDate, '<')
+    		);
+
+    	sqlmyMaster()->del('qingjianproxys', $cond);
+    }
+
     static function execProxyCrawel()
     {
+
+    	// 首先清除掉 6个小时之前的数据
+    	self::remove6hData();
+
     	// 检查 self::$aliveProxyData 缺少的规则对应的代理数量
     	// 从而实现自动专用增补支持
 
@@ -203,26 +232,33 @@ class P
     	$addRulers = array();
     	foreach (self::$aliveProxyData as $ruleid => $pc) {
     		if ($pc < P::COM_NUM) {
-    			$addRulers[$ruleid] = P::COM_NUM - $pc;
+    			$addRulers[$ruleid] = $pc;
     		}
     	}
 
     	if (!empty($addRulers)) {
 
-    		$proxyHosts = self::fetchProxys(100);
+    		$proxyHosts = self::fetchProxys(200);
+
+    		// 清除 ht缓存数据
+    		self::cleanHtCache();
 
     		foreach ($proxyHosts as $host) {
 
-    			if (empty($addRulers)) break;
+    			if (empty($addRulers)){
+    				self::outputln('null addRulers');
+    				break;
+    			}
 
     			foreach ($addRulers as $ruleid => $pc) {
 
     				$bool = self::crawel($host, $ruleid);
     				if ($bool == true) {
-    					$pc ++;
+    					$addRulers[$ruleid] = $pc + 1;
     				}
 
     				if (P::COM_NUM <= $pc) {
+    					self::outputln("unset addRulers[$ruleid]");
     					unset($addRulers[$ruleid]);
     				}
     			}
@@ -230,6 +266,39 @@ class P
 			}
 
     	}
+    }
+
+    static function assertHttpResponse($response, $assert)
+    {
+    	$assert = (array) $assert;
+
+    	if (empty($assert)) return true;
+
+    	$part = Arrays::val($assert, 'part', 'httpbody');
+    	$type = Arrays::val($assert, 'type', 'text');
+    	$expression = Arrays::val($assert, 'expression', 'contain');
+    	$content = Arrays::val($assert, 'content', 'SUCCESS');
+    	if ($part == 'httpbody') {
+
+    		$httpbody = $response->raw_body;
+    		if ($type == 'text') {
+
+    			if ($expression == 'contain') {
+
+    				if (strpos($httpbody, $content) !== false){
+    					return true;
+    				}
+    			}
+    			else {
+    				// 扩展使用 其它的比较方法
+    			}
+    		}
+    		else {
+    			// 扩展使用 诸如 xml,json之类的
+    		}
+    	}
+
+    	return false;
     }
 
     static function crawel($host, $ruleid)
@@ -247,39 +316,100 @@ class P
 
     	try {
 
-    		$httpbody = self::curl($proxy, 'get', P::IP_GETURL, array(), array(), 20);
+    		if (empty(self::$htCacheData[$host])) {
+    			$response = self::curl($proxy, 'get', P::IP_GETURL, array(), array(), 15);
 
-    		$httpbody = trim($httpbody);
+    			$httpbody = $response->raw_body;
 
-    		self::outputln("{$httpbody} == {$proxyAdderss}");
+	    		$httpbody = trim($httpbody);
 
-    		if ($httpbody == $proxyAdderss) {
-    			$ht = 1; // 匿名代理
+	    		self::outputln("{$httpbody} == {$proxyAdderss}");
+
+	    		if ($httpbody == $proxyAdderss) {
+	    			$ht = 1; // 匿名代理
+	    		}
+	    		else if (self::$clientIp == $httpbody) {
+	    			$ht = 2;
+	    		}
+	    		else {
+	    			$ht = -1;	
+	    		}
+
+	    		self::$htCacheData[$host] = $ht;
     		}
-    		else if (self::$clientIp == $httpbody) {
-    			$ht = 2;
-    		}
-    		else {
-    			$ht = 0;	
-    		}
+
+    		$ht = self::$htCacheData[$host];
 
     		$headers = array();
     		$headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.143 Safari/537.36';
 	    	$headers['X-Requested-With'] = 'XMLHttpRequest';
 	    	$headers['Accept'] = 'application/json, text/javascript, */*; q=0.01';
-	    	// $headers['Referer'] = 'https://my.playstation.com/logged-in/trophies/public-trophies/';
-	    	$headers['Referer'] = 'https://item.taobao.com/item.htm?id=41104924035';
 
+	    	$httpOptions = Arrays::val(self::$rulers[$ruleid], 'httpOptions', array());	    	
+	    	
+	    	if (!empty($httpOptions['refer'])) {
+	    		$headers['Referer'] = $httpOptions['refer'];
+	    	}
 
-	    	$cookie = 't=b5c1c7f39a2e7ade3ab14e23a87d7f9d; thw=cn; cna=bilGE9us2XQCAbZn93M22zJD; tg=0; l=AtDQjb1lxNLCKISlRKiWWMwQIBUisbTj; ali_ab=182.100.69.84.1523272421793.5; UM_distinctid=162ae2221fa1bc-023cd3e6218d27-683b0f7f-13c680-162ae2221fb138; miid=7585220751448887461; hng=CN%7Czh-CN%7CCNY%7C156; enc=%2B5gllcM4dyfiSlGO4UVFPZRIbsb4mqiFQct8aU61cJOcmEvPRZSXYRiexcCcD5dVrkeQOfVLcSH3%2FWv%2FQoYSyw%3D%3D; lgc=lxq73061; tracknick=lxq73061; cookie2=21590e525efec75c5908be7679bdc574; v=0; _tb_token_=757333761b373; dnk=lxq73061; mt=np=&ci=67_1; _cc_=VT5L2FSpdA%3D%3D; _mw_us_time_=1526558443172; _m_h5_tk=5b749c3645f7cc5e989c466e8f5868da_1526560965078; _m_h5_tk_enc=41718aa35722929a1e7b28d065787c36; uc3=nk2=D9syBSLMJ2g%3D&id2=Vy0WpgKoUho%3D&vt3=F8dBz499zqErEeB2RHc%3D&lg2=UtASsssmOIJ0bQ%3D%3D; existShop=MTUyNjU1ODQ0Nw%3D%3D; sg=187; csg=4f11742f; cookie1=AiLU5buHwFeM5qqCC%2Bjl2NVNJQI7aGneBufNfrI5MZA%3D; unb=41572778; skt=9d647bb039b59bbc; _l_g_=Ug%3D%3D; _nk_=lxq73061; cookie17=Vy0WpgKoUho%3D; isg=BNDQjB3Jvq7onWKVi3ps5Z6eoRjiMXORjNNjJcqhnCv-BXCvcqmEcya32c3l1Wy7; Hm_lvt_ba7c84ce230944c13900faeba642b2b4=1526537576,1526558449; Hm_lpvt_ba7c84ce230944c13900faeba642b2b4=1526558449; uc1=cookie16=VT5L2FSpNgq6fDudInPRgavC%2BQ%3D%3D&cookie21=W5iHLLyFeYFnNZKBCYQf&cookie15=V32FPkk%2Fw0dUvg%3D%3D&existShop=true&pas=0&cookie14=UoTeOLwBY7utPQ%3D%3D&cart_m=0&tag=8&lng=zh_CN;';
+	    	if (!empty($httpOptions['cookie'])) {
+	    		Unirest_Request::cookie($httpOptions['cookie']);
+	    	}
 
-    		Unirest_Request::cookie($cookie);
+	    	// self::outputln($httpOptions['cookie']);
+	    	
+    		$response = self::curl($proxy, 'get', self::$rulers[$ruleid]['url'], array(), $headers, 30);
 
-
-    		$httpbody = self::curl($proxy, 'get', self::$rulers[$ruleid]['url'], array(), $headers, 30);
+    		$httpbody = $response->raw_body;
     		self::outputln("{$httpbody}");
 
-    		file_put_contents(__DIR__.'/x.txt', $httpbody);
+    		// 重置 cookies
+    		Unirest_Request::cookie(null);
+
+    		$assert = Arrays::val(self::$rulers[$ruleid], 'assert', array());    		
+    		// assert body
+    		if (self::assertHttpResponse($response, $assert) == true) {
+    			self::outputln("assert(SUCCESS)");
+
+    			// 入库
+    			$cond = array(
+    				'host'	=> $host,
+    				'ruleid'	=> $ruleid,
+    			);
+
+    			$isExist = sqlmyMaster()->count('qingjianproxys', $cond, 'id') > 0;
+
+    			if ($isExist) {
+    				// 更新
+    				$data = array(
+    						'ht'	=> $ht,
+    						'status'	=> 1,
+    						'updated_at'	=> date('Y-m-d H:i:s', time()),
+    					);
+
+    				sqlmyMaster()->update('qingjianproxys', $data, $cond);
+    			}
+    			else {
+    				// 添加
+    				$data = array(
+    						'host'	=> $host,
+    						'ruleid'	=> $ruleid,
+    						'ht'	=> $ht,
+    						'status'	=> 1,
+    						'updated_at'	=> date('Y-m-d H:i:s', time()),
+    					);
+
+    				sqlmyMaster()->insert('qingjianproxys', $data);
+    			}
+
+    			return true;
+    		}
+    		else {
+    			$cond = array(
+    				'host'	=> $host,
+    				'ruleid'	=> $ruleid,
+    			);
+    			sqlmyMaster()->del('qingjianproxys', $cond);
+    		}
     	}
     	catch(Exception $ex){
     		self::outputln(__METHOD__. ':' . __LINE__);
@@ -312,21 +442,21 @@ class P
 
 		for(;;) {
 			try {
-				do {
-					// 查询db中活着的代理地址的数量
-					self::fetchAliveProxyData();
-					if (self::checkMustGetAliveProxy()) {
-						self::execProxyCrawel();
-					}
 
-				} while (false);
+				self::outputln('OOOO: ' . date('Y-m-d H:i:s'));
+
+				// 查询db中活着的代理地址的数量
+				self::fetchAliveProxyData();
+				if (self::checkMustGetAliveProxy()) {
+					self::execProxyCrawel();
+				}
 
 			}
 			catch(Exception $ex) {
 				self::outputln('Error: ' . $ex->getMessage());
-			}			
+			}
 
-			sleep(15);			
+			sleep(60);			
 		}
 		
 	}

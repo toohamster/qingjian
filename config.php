@@ -19,6 +19,8 @@ return array(
 			'attr'	=> array(
 					\PDO::ATTR_PERSISTENT => false,
 				),
+
+			'monitor'	=> 'P::sqlMonitor',
 		),
 
 		'slaver'	=> array(
@@ -34,6 +36,7 @@ return array(
 			'attr'	=> array(
 					\PDO::ATTR_PERSISTENT => false,
 				),
+			'monitor'	=> 'P::sqlMonitor',
 		),		
 	),
 
@@ -43,16 +46,36 @@ return array(
 
 			'id'	=> 'guize001',
 			'url'	=> 'https://h5api.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/?jsv=2.4.11&appKey=12574478&t=1523935666735&sign=&api=mtop.taobao.detail.getdetail&v=6.0&ttid=2017%40htao_h5_1.0.0&type=jsonp&dataType=jsonp&callback=mtopjsonp1&data=%7B%22exParams%22%3A%22%7B%5C%22countryCode%5C%22%3A%5C%22CN%5C%22%7D%22%2C%22itemNumId%22%3A%2216204910274%22%7D',
-			'refer'	=> '',
-			'cookie'	=> '',
+
+			'httpOptions'	=> array(
+				'refer'	=> 'https://item.taobao.com/item.htm?id=41104924035',
+				'cookie'	=> 't=b5c1c7f39a2e7ade3ab14e23a87d7f9d; thw=cn; cna=bilGE9us2XQCAbZn93M22zJD; tg=0; l=AtDQjb1lxNLCKISlRKiWWMwQIBUisbTj; ali_ab=182.100.69.84.1523272421793.5; UM_distinctid=162ae2221fa1bc-023cd3e6218d27-683b0f7f-13c680-162ae2221fb138; miid=7585220751448887461; hng=CN%7Czh-CN%7CCNY%7C156; enc=%2B5gllcM4dyfiSlGO4UVFPZRIbsb4mqiFQct8aU61cJOcmEvPRZSXYRiexcCcD5dVrkeQOfVLcSH3%2FWv%2FQoYSyw%3D%3D; lgc=lxq73061; tracknick=lxq73061; cookie2=21590e525efec75c5908be7679bdc574; v=0; _tb_token_=757333761b373; dnk=lxq73061; mt=np=&ci=67_1; _cc_=VT5L2FSpdA%3D%3D; _mw_us_time_=1526558443172; _m_h5_tk=5b749c3645f7cc5e989c466e8f5868da_1526560965078; _m_h5_tk_enc=41718aa35722929a1e7b28d065787c36; uc3=nk2=D9syBSLMJ2g%3D&id2=Vy0WpgKoUho%3D&vt3=F8dBz499zqErEeB2RHc%3D&lg2=UtASsssmOIJ0bQ%3D%3D; existShop=MTUyNjU1ODQ0Nw%3D%3D; sg=187; csg=4f11742f; cookie1=AiLU5buHwFeM5qqCC%2Bjl2NVNJQI7aGneBufNfrI5MZA%3D; unb=41572778; skt=9d647bb039b59bbc; _l_g_=Ug%3D%3D; _nk_=lxq73061; cookie17=Vy0WpgKoUho%3D; isg=BNDQjB3Jvq7onWKVi3ps5Z6eoRjiMXORjNNjJcqhnCv-BXCvcqmEcya32c3l1Wy7; Hm_lvt_ba7c84ce230944c13900faeba642b2b4=1526537576,1526558449; Hm_lpvt_ba7c84ce230944c13900faeba642b2b4=1526558449; uc1=cookie16=VT5L2FSpNgq6fDudInPRgavC%2BQ%3D%3D&cookie21=W5iHLLyFeYFnNZKBCYQf&cookie15=V32FPkk%2Fw0dUvg%3D%3D&existShop=true&pas=0&cookie14=UoTeOLwBY7utPQ%3D%3D&cart_m=0&tag=8&lng=zh_CN;',
+			),
+			
 			'assert'	=> array(
-				'type'	=> 'text',
 				'part'	=> 'httpbody',
+				'type'	=> 'text',
 				'expression'	=> 'contain',
 				'content'	=> 'SUCCESS',
 			),
 
 		),
 
+		array(
+
+			'id'	=> 'guize002',
+			'url'	=> 'http://portal.yacebao.com/forget.html',
+
+			'httpOptions'	=> array(
+			),
+			
+			'assert'	=> array(
+				'part'	=> 'httpbody',
+				'type'	=> 'text',
+				'expression'	=> 'contain',
+				'content'	=> '发送重置密码邮件',
+			),
+
+		),
 	),
 );

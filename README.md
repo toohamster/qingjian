@@ -24,13 +24,14 @@ SUCCESS
 ```
 CREATE TABLE `qingjianproxys` (
    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-   `host` varchar(100) NOT NULL COMMENT '代理主机',
+   `host` varchar(100) CHARACTER SET latin1 NOT NULL COMMENT '代理主机',
    `ht` tinyint(8) NOT NULL COMMENT '代理类型: 1 不显示客户端Ip;2 显示客户端Ip',
-   `ruleid` varchar(100) NOT NULL COMMENT '规则标识',
+   `ruleid` varchar(100) CHARACTER SET latin1 NOT NULL COMMENT '规则标识',
    `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否可用',
    `updated_at` datetime DEFAULT NULL COMMENT '最后一次操作时间',
    PRIMARY KEY (`id`),
+   UNIQUE KEY `undsjii997ijj` (`host`,`ruleid`),
    KEY `ruleid288ehddsfsd4` (`ruleid`),
    KEY `statsdsinx877jjy7` (`status`)
- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ ) ENGINE=InnoDB DEFAULT CHARSET=utf8
 ```
