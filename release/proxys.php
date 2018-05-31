@@ -7,11 +7,10 @@ class P
 {
 
 	const COM_NUM = 100;
-	const IP_GETURL = 'http://quick.lianzh.com/_tmp/clientip.php';
-
 	static $debugIs = false;
 
-	static $clientIp = '127.0.0.1';
+    static $clientIp = '127.0.0.1';
+	static $clientIpGet = '';
 
 	static $aliveProxyData = array();
 	static $htCacheData = array();
@@ -89,7 +88,10 @@ class P
 
     static function sqlMonitor($sql, $dsnId)
 	{
-		self::outputln("[sql]: {$sql}");
+        // 只有在 命令模式下才监测 sql
+        if (PHP_SAPI === 'cli') {
+            self::outputln("[sql]: {$sql}");
+        }		
 	}
 
     static function proxyConfig($address, $port = 1080, $type = CURLPROXY_HTTP, $tunnel = false)
@@ -317,7 +319,7 @@ class P
     	try {
 
     		if (empty(self::$htCacheData[$host])) {
-    			$response = self::curl($proxy, 'get', P::IP_GETURL, array(), array(), 15);
+    			$response = self::curl($proxy, 'get', P::$clientIpGet, array(), array(), 15);
 
     			$httpbody = $response->raw_body;
 
@@ -419,7 +421,7 @@ class P
     	return false;
     }
 
-	static function main()
+	static function cliMain()
 	{
 		date_default_timezone_set('PRC');
 
@@ -438,7 +440,8 @@ class P
 
 		self::setRulers($config['ruler']);
 
-		self::$clientIp = $config['clientIp'];
+        self::$clientIp = $config['clientIp'];
+		self::$clientIpGet = $config['clientIpGet'];
 
 		for(;;) {
 			try {
@@ -461,7 +464,122 @@ class P
 		
 	}
 
+	static function webMain()
+	{
+        $config = require(dirname(__FILE__).'/config.php');
+        sqlmyInit($config['db']);
+
+        self::setRulers($config['ruler']);
+
+        self::$clientIp = $config['clientIp'];
+        self::$clientIpGet = $config['clientIpGet'];
+
+        $ruleId = Arrays::val($_GET, 'ruleId', '');
+        $ht = (int) Arrays::val($_GET, 'ht', 0);
+        $length = (int) Arrays::val($_GET, 'length', 0);
+
+        $response = array(
+                'code'  => -1,
+                'msg'   => '出错了',
+                'data'   => array(),
+            );
+
+        do {
+            if (empty(self::$rulers[$ruleId])){
+                $response['msg'] = "出错了: ruleId `{$ruleId}` 未定义!";
+                break;
+            }
+
+            try {
+                $data = self::getCanUseProxys($ruleId, $ht, $length);
+
+                $response['code']   = 0;
+                $response['data']   = $data;
+                $response['msg']   = 'SUCCESS';
+
+                break;
+            }
+            catch(Exception $ex)
+            {
+                $response['msg'] = "出错了: " . $ex->getMessage();
+            }
+
+        } while(false);
+
+        echo json_encode($response);
+	}
+
+    static function apiCall($ruleId, $ht=0, $length=5)
+    {
+        static $noInit = true;
+        if ($noInit) {
+            $noInit = false;
+
+            $config = require(dirname(__FILE__).'/config.php');
+            sqlmyInit($config['db']);
+
+            self::setRulers($config['ruler']);
+
+            self::$clientIp = $config['clientIp'];
+            self::$clientIpGet = $config['clientIpGet'];
+        }
+
+        $response = array(
+                'code'  => -1,
+                'msg'   => '出错了',
+                'data'   => array(),
+            );
+
+        do {
+            if (empty(self::$rulers[$ruleId])){
+                $response['msg'] = "出错了: ruleId `{$ruleId}` 未定义!";
+                break;
+            }
+
+            try {
+                $data = self::getCanUseProxys($ruleId, $ht, $length);
+
+                $response['code']   = 0;
+                $response['data']   = $data;
+                $response['msg']   = 'SUCCESS';
+
+                break;
+            }
+            catch(Exception $ex)
+            {
+                $response['msg'] = "出错了: " . $ex->getMessage();
+            }
+
+        } while(false);
+
+        return $response;
+    }
+
+    /**
+     * 返回 可供使用的代理主机列表
+     * 
+     * @param  string $ruleId 规则id
+     * @param  int $ht     代理类型: 1 为不显示客户端Ip; 2为显示客户端Ip; -1 表示未知; 0 代表不检查
+     * @param  int $length 数量
+     * 
+     * @return array
+     */
+	static function getCanUseProxys($ruleId, $ht=0, $length=5)
+    {
+        $cond = array(
+                    'ruleid'    => $ruleId,
+                    'status'    => 1,
+                );
+
+        if ($ht != 0) {
+            $cond['ht'] = $ht;
+        }
+
+        if ($length < 1) $length = 5;
+
+        $rows = sqlmyMaster()->select('qingjianproxys', $cond, 'ruleid,host,ht,updated_at', 'updated_at DESC', $length);
+
+        return $rows;
+    }
+
 }
-
-
-P::main();
