@@ -1,5 +1,23 @@
 #qingjian
+a demo for proxy tiny task!
 
+
+#### 概述
+```
+1、检查代理端口是否开通
+2、检查代理匿名类别（就是对方显示的ip是代理的还是我们的）
+3、检查访问指定url能否返回指定格式的数据（多条规则）
+4、定制执行，记录检查状态和时间，无效的删除，结果不够时从代理ip提供网址下载新的数据（比如固定要有100条可用的）
+5、方便调用检查结果（你先放你服务器上，或者我给你个服务器，你给我一条http: url加参数调用返回ip的方式和 php 内部调用的方式）
+
+```
+
+#### 代理获取地址
+```
+http://tvp.daxiangdaili.com/ip/?tid=559913587683584&num=10&filter=on&longlife=200
+这是获取代理ip列表的网址（没有经过我们验证的）
+http://www.daxiangdaili.com/api
+```
 
 #### 表结构
 ```
@@ -176,4 +194,12 @@ array(
 		...
 	) 
 )
+```
+
+#### 演示实例
+```
+// 当前我在个人VPS上进行测试, 可访问 
+// http://quick.lianzh.com/_tmp/qingjian/release/proxyrun.php?ruleId=guize001
+// http://quick.lianzh.com/_tmp/qingjian/release/proxyrun.php?ruleId=guize002
+来查看数据
 ```
