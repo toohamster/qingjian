@@ -1,0 +1,220 @@
+注意JSON文档不支持注释，下面的注释在使用过程请移除。
+{
+  //ASR配置
+  "asr": {
+    //xfyun 是科大讯飞 webapi引擎
+    "xfyun": {            
+     //错误阈值。就是APPID连续失败多少次就停用这个账号。默认0：永不停用
+      "error_thresholds":10,
+      //0：顺序 1：轮询 ，keylist账户选择模式。 顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号。   
+      "mode": 0,        
+      //当所有账户连续失败次数超过阈值，是否停用这个ASR引擎。如果只配置了一个ASR引擎千万不要设置true，默认false
+      "allowdisable" : true,
+       //连接超时
+      "connecttimeout": 1000,  
+      //等待识别超时
+      "responsetimeout": 2000,  
+      //情景模式
+      "scene":"main",
+      //是否使用语音语义接口
+      "semantic":false,
+      //默认true,使用aiui接口，如果设置false就是使用webapi接口（http://bbs.xfyun.cn/forum.php?mod=viewthread&tid=36481）
+      "aiui":true,
+      //webaki用于方言支持，需要先讯飞开通  比如sms8k 普通话 lmz8k 四川话
+      "engine":"sms8k",
+      //可以设置多个KEY，根据mode设置使用KEY。
+      "keylist": [
+        {
+          "id": "5a519267",
+          "secret": "e212fc8e4c9747a39fa1c56940e705be"
+        },
+        {
+          "id": "5a6c90ec",
+          "secret": "c7bc069a31d44ebc95b9335738e51d32"
+        }
+      ]
+    },
+    //百度语音识别
+    "baidu": {
+      "error_thresholds":10,
+      "mode": 0,
+      "allowdisable" : true,
+      "connecttimeout": 1000,
+      "responsetimeout": 2000,
+      //随便写一个百度后台统计用的
+      "cuid": "robot",
+      "keylist": [
+        {
+          "id": "WXXz2KuAg1HYgVLIlgh0tEt1",
+          "secret": "7ce2d30b64cf7d9c1c772efd07f1246b"
+        }
+      ]
+    },
+    //阿里云识别引擎
+    "aliyun": {
+      "error_thresholds":10,
+      "allowdisable" : true,
+      "mode": 0,
+      "connecttimeout": 1000,
+      "responsetimeout": 2000,
+      "keylist": [
+        {
+          "id": "LTAISeEObGSqPWzN",
+          "secret": "QfColjf1yXFwIAD9hYyhlvDKyxnF5U"
+        }
+      ]
+    },
+    //讯飞SDK ASR接口
+    "iflytek": {
+        "mode": 0,
+        //iflytek程序所在目录  libmsc.so 也必须放这个目录 （libmsc.so和appid必须对应）
+        "workdir": "/var/smartivr/bin",
+        "responsetimeout": 2000,
+        //ASR程序路径和参数
+        //参数说明
+        //language: 语言
+        //       zh_cn：简体中文
+        //       zh_tw：繁体中文
+        //        en_us：英文
+        //       默认值：zh_cn
+        //accent:   方言
+        //       mandarin：普通话
+        //       cantonese：粤语
+        //       lmz：四川话
+        //       默认值：mandarin
+        "command": "./iflytek type=${type} appid=${appid} encoding=utf8 language=zh_cn accent=mandarin",
+        //只支持一个APP ID 多个APPID，请配置多个ASR识别命令如下面的iflytek2。 
+        "keylist": [{
+        "id": "555fd336"
+        }]
+    },
+     //讯飞SDK ASR接口 第二个APPID 
+    "iflytek2": {
+        "mode": 0,
+        "workdir": "/var/smartivr/iflytek2",
+        "responsetimeout": 2000,
+        "command": "./iflytek type=${type} appid=${appid} encoding=utf8 language=zh_cn accent=mandarin", 
+        "keylist": [{
+        "id": "555fd336"
+        }]
+    },
+    //启用那些使用识别引擎
+    "enable": [
+      "iflytek2",
+      "xfyun",
+      "baidu",
+      "aliyun"
+    ],
+    //0：顺序 1：轮询  。这个mode 指的是 enable列表里账户选择模式。 顺序：就是第一个ASR识别失败的时候才使用下一个。
+    "mode": 0 
+  },
+
+  //TTS配置
+  "tts": {
+      //sox程序路径，baidu返回的是mp3格式，用sox命令转换成wav，其他TTS不需要。
+      "sox": "sox",
+      //百度TTS接口
+      
+      "baidu": {
+           //0：顺序 1：轮询 ，keylist账户选择模式。 顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号。 
+          "mode": 0,
+          // 发音人选择, 0为普通女声，1为普通男生，3为情感合成-度逍遥，4为情感合成-度丫丫，默认为普通女声
+          "voice":"",
+          "connecttimeout": 1000,
+          "responsetimeout": 2000,
+          "cuid": "robot",
+          "keylist": [{
+              "id": "WXXz2KuAg1HYgVLIlgh0tEt1",
+              "secret": "7ce2d30b64cf7d9c1c772efd07f1246b"
+          }]
+      },
+      //讯飞SDK TTS接口
+      "iflytek": {
+          "mode": 0,
+          //iflytek程序所在目录  libmsc.so 也必须放这个目录 （libmsc.so和appid必须对应）
+          "workdir": "/var/smartivr/bin",
+          //voice说明
+            ;小燕  xiaoyan  普通话  青年女声  
+            ;燕平  yanping  普通话  青年女声  
+            ;晓峰  xiaofeng  普通话  青年男声  
+            ;晓婧  jinger  普通话  青年女声  
+            ;唐老鸭  donaldduck  普通话  卡通  
+            ;许小宝  babyxu  普通话  童声  
+            ;楠楠  nannan  普通话  童声  
+            ;晓梦  xiaomeng  普通话  青年女声  
+            ;晓琳  xiaolin  台湾普通话  青年女声  
+            ;晓倩  xiaoqian  东北话  青年女声  
+            ;晓蓉  xiaorong  四川话  青年女声  
+            ;小坤  xiaokun  河南话  青年男声  
+            ;小强  xiaoqiang  湖南话  青年男声  
+            ;晓美  xiaomei  粤语  青年女声  
+            ;大龙  dalong  粤语  青年男声  
+            ;Catherine  catherine  美式纯英文  青年女声  
+            ;John  john  美式纯英文  青年男声  
+            ;henry  henry  英文  青年男声  
+            ;玛丽安  Mariane  法语  青年女声  
+            ;阿拉本  Allabent  俄罗斯语  青年女声  
+            ;加芙列拉  Gabriela  西班牙语  青年女声  
+            ;艾伯哈  Abha  印地语  青年女声  
+            ;小云  XiaoYun  越南语  青年女声  
+          "voice": "xiaoyan",
+          //TTS程序路径和参数
+          "command": "iflytek type=${type} appid=${appid} speed=50 encoding=utf8 file=${file} voice=${voice}",
+          "keylist": [{
+                "id": "555fd336"
+           }]
+      },
+      //阿里云TTS接口
+      "aliyun": {
+          "mode": 0,
+           //xiaogang - 男，xiaoyun - 女
+          "voice":"xiaoyun",
+          "connecttimeout": 1000,
+          "responsetimeout": 2000,
+          "keylist": [{
+              "id": "LTAISeEObGSqPWzN",
+              "secret": "QfColjf1yXFwIAD9hYyhlvDKyxnF5U"
+          }]
+      },
+    //科大webapiTTS接口，注意是WEBAPI，不是AIUI。
+     "aliyun": {
+        "mode": 0,
+        "voice": "xiaoyun",
+        "connecttimeout": 1000,
+        "responsetimeout": 2000,
+        "keylist": [{
+            "id": "LTAISeEObGSqPWzN",
+            "secret": "QfColjf1yXFwIAD9hYyhlvDKyxnF5U"
+            }]
+      },
+      //使用那些使用TTS引擎
+      "enable": [
+          "aliyun"
+      ],
+      //0：顺序 1：轮询  。这个mode 指的是 enable列表里账户选择模式。 顺序：就是第一个ASR识别失败的时候才使用下一个。
+      "mode": 0 
+      
+  },
+  //系统配置只有默认配置文件里面的才有效。start_asr,custom_playback指定的配置文件不会读取的system里面内容的。
+  "system": {
+    "record": {
+        //把提交到ASR识别的书保存录音文件路径,不需要录音就不要设置
+        "path": "设置一个路径",
+        //每天创建的目录格式
+        "folderformat": "%Y%m%d"
+    },
+
+    "tts:":{
+        //windows 路径不要用\用/比如 c:/ttsdir
+        "path:":"设置一个路径"           
+    },
+
+    "gender":{
+        //配置男女识别接口，如果不需要这个功能就设置""
+        "path": "/var/smartivr/bin/gender" 
+    }
+
+  }
+}
+
+
