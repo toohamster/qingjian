@@ -352,6 +352,34 @@ $('#system-gender').click(function(){
 	}
 });
 
+$('#tts-iflytek').click(function(){
+	var chk = $('#tts-iflytek').prop('checked')
+	if (chk) {
+		$('div.tts-iflytek-div').show()
+	}
+	else {
+		$('div.tts-iflytek-div').hide()
+	}
+});
+$('#tts-aliyun').click(function(){
+	var chk = $('#tts-aliyun').prop('checked')
+	if (chk) {
+		$('div.tts-aliyun-div').show()
+	}
+	else {
+		$('div.tts-aliyun-div').hide()
+	}
+});
+$('#tts-baidu').click(function(){
+	var chk = $('#tts-baidu').prop('checked')
+	if (chk) {
+		$('div.tts-baidu-div').show()
+	}
+	else {
+		$('div.tts-baidu-div').hide()
+	}
+});
+
 $('div.tts-iflytek-div').delegate('a.v-keylist2-rowadd','click',function(){
 	var html = template('keylist-row2', {});
 	$('#tts-iflytek-keylist').append(html)
