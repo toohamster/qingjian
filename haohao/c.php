@@ -289,7 +289,7 @@
 		</form>
 	</div>
 
-	<h3 id="_3"><input type="checkbox" id="asr-iflytek2"> 讯飞SDK ASR接口 第二个APPID</h3>
+	<h3 id="_3"><input type="checkbox" id="asr-iflytek2"> 讯飞SDK ASR接口2</h3>
 	<div class="bb2 asr-iflytek2-div">
 		<form id="asr-iflytek2-form">			
 			<div class="form-group">
@@ -355,12 +355,481 @@
 		</form>
 	</div>
 
+	<h3 id="_3"><input type="checkbox" id="asr-iflytek3"> 讯飞SDK ASR接口3</h3>
+	<div class="bb2 asr-iflytek3-div">
+		<form id="asr-iflytek3-form">			
+			<div class="form-group">
+				<label for="asr-iflytek3-mode">keylist账户选择模式: </label>
+				<span class="label label-warning">顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号</span>
+				<select class="form-control" id="asr-iflytek3-mode">
+				  <option value="0">顺序</option>
+				  <option value="1">轮询</option>
+				</select>
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek3-workdir">iflytek程序所在目录: </label>
+			    <input type="text" class="form-control" id="asr-iflytek3-workdir" placeholder="libmsc.so 也必须放这个目录 （libmsc.so和appid必须对应）">
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek3-responsetimeout">等待识别超时: </label>
+			    <input type="text" class="form-control" id="asr-iflytek3-responsetimeout" placeholder="">
+			</div>
+			
+			<div class="form-group">
+				<div class="bs-callout bs-callout-info" id="callout-xref-input-group">
+				    <h4>ASR程序路径和参数</h4>
+				    <p>
+				    	<figure class="highlight">
+				    		<pre>
+				    			<code class="language-html" data-lang="html">
+		//ASR程序路径和参数
+		//参数说明
+		//language: 语言
+		//       zh_cn：简体中文
+		//       zh_tw：繁体中文
+		//        en_us：英文
+		//       默认值：zh_cn
+		//accent:   方言
+		//       mandarin：普通话
+		//       cantonese：粤语
+		//       lmz：四川话
+		//       默认值：mandarin	
+				    			</code>
+				    		</pre>
+				    	</figure>	
+				    </p>
+				</div>
+				<textarea class="form-control" rows="3" id="asr-iflytek3-command" placeholder="./iflytek type=${type} appid=${appid} encoding=utf8 language=zh_cn accent=mandarin"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="asr-iflytek3-keylist">keylist: </label>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+				          <th>#</th>
+				          <th>id</th>
+				          <th>
+				          	<a class="btn btn-default v-keylist2-rowadd" href="javascript:;" role="button">添加</a>
+				          </th>
+				        </tr>
+					</thead>
+					<tbody id="asr-iflytek3-keylist">
+						
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</div>
+
+	<h3 id="_3"><input type="checkbox" id="asr-iflytek4"> 讯飞SDK ASR接口4</h3>
+	<div class="bb2 asr-iflytek4-div">
+		<form id="asr-iflytek4-form">			
+			<div class="form-group">
+				<label for="asr-iflytek4-mode">keylist账户选择模式: </label>
+				<span class="label label-warning">顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号</span>
+				<select class="form-control" id="asr-iflytek4-mode">
+				  <option value="0">顺序</option>
+				  <option value="1">轮询</option>
+				</select>
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek4-workdir">iflytek程序所在目录: </label>
+			    <input type="text" class="form-control" id="asr-iflytek4-workdir" placeholder="libmsc.so 也必须放这个目录 （libmsc.so和appid必须对应）">
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek4-responsetimeout">等待识别超时: </label>
+			    <input type="text" class="form-control" id="asr-iflytek4-responsetimeout" placeholder="">
+			</div>
+			
+			<div class="form-group">
+				<div class="bs-callout bs-callout-info" id="callout-xref-input-group">
+				    <h4>ASR程序路径和参数</h4>
+				    <p>
+				    	<figure class="highlight">
+				    		<pre>
+				    			<code class="language-html" data-lang="html">
+		//ASR程序路径和参数
+		//参数说明
+		//language: 语言
+		//       zh_cn：简体中文
+		//       zh_tw：繁体中文
+		//        en_us：英文
+		//       默认值：zh_cn
+		//accent:   方言
+		//       mandarin：普通话
+		//       cantonese：粤语
+		//       lmz：四川话
+		//       默认值：mandarin	
+				    			</code>
+				    		</pre>
+				    	</figure>	
+				    </p>
+				</div>
+				<textarea class="form-control" rows="3" id="asr-iflytek4-command" placeholder="./iflytek type=${type} appid=${appid} encoding=utf8 language=zh_cn accent=mandarin"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="asr-iflytek4-keylist">keylist: </label>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+				          <th>#</th>
+				          <th>id</th>
+				          <th>
+				          	<a class="btn btn-default v-keylist2-rowadd" href="javascript:;" role="button">添加</a>
+				          </th>
+				        </tr>
+					</thead>
+					<tbody id="asr-iflytek4-keylist">
+						
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</div>
+
+	<h3 id="_3"><input type="checkbox" id="asr-iflytek5"> 讯飞SDK ASR接口5</h3>
+	<div class="bb2 asr-iflytek5-div">
+		<form id="asr-iflytek5-form">			
+			<div class="form-group">
+				<label for="asr-iflytek5-mode">keylist账户选择模式: </label>
+				<span class="label label-warning">顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号</span>
+				<select class="form-control" id="asr-iflytek5-mode">
+				  <option value="0">顺序</option>
+				  <option value="1">轮询</option>
+				</select>
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek5-workdir">iflytek程序所在目录: </label>
+			    <input type="text" class="form-control" id="asr-iflytek5-workdir" placeholder="libmsc.so 也必须放这个目录 （libmsc.so和appid必须对应）">
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek5-responsetimeout">等待识别超时: </label>
+			    <input type="text" class="form-control" id="asr-iflytek5-responsetimeout" placeholder="">
+			</div>
+			
+			<div class="form-group">
+				<div class="bs-callout bs-callout-info" id="callout-xref-input-group">
+				    <h4>ASR程序路径和参数</h4>
+				    <p>
+				    	<figure class="highlight">
+				    		<pre>
+				    			<code class="language-html" data-lang="html">
+		//ASR程序路径和参数
+		//参数说明
+		//language: 语言
+		//       zh_cn：简体中文
+		//       zh_tw：繁体中文
+		//        en_us：英文
+		//       默认值：zh_cn
+		//accent:   方言
+		//       mandarin：普通话
+		//       cantonese：粤语
+		//       lmz：四川话
+		//       默认值：mandarin	
+				    			</code>
+				    		</pre>
+				    	</figure>	
+				    </p>
+				</div>
+				<textarea class="form-control" rows="3" id="asr-iflytek5-command" placeholder="./iflytek type=${type} appid=${appid} encoding=utf8 language=zh_cn accent=mandarin"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="asr-iflytek5-keylist">keylist: </label>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+				          <th>#</th>
+				          <th>id</th>
+				          <th>
+				          	<a class="btn btn-default v-keylist2-rowadd" href="javascript:;" role="button">添加</a>
+				          </th>
+				        </tr>
+					</thead>
+					<tbody id="asr-iflytek5-keylist">
+						
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</div>
+
+	<h3 id="_3"><input type="checkbox" id="asr-iflytek6"> 讯飞SDK ASR接口6</h3>
+	<div class="bb2 asr-iflytek6-div">
+		<form id="asr-iflytek6-form">			
+			<div class="form-group">
+				<label for="asr-iflytek6-mode">keylist账户选择模式: </label>
+				<span class="label label-warning">顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号</span>
+				<select class="form-control" id="asr-iflytek6-mode">
+				  <option value="0">顺序</option>
+				  <option value="1">轮询</option>
+				</select>
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek6-workdir">iflytek程序所在目录: </label>
+			    <input type="text" class="form-control" id="asr-iflytek6-workdir" placeholder="libmsc.so 也必须放这个目录 （libmsc.so和appid必须对应）">
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek6-responsetimeout">等待识别超时: </label>
+			    <input type="text" class="form-control" id="asr-iflytek6-responsetimeout" placeholder="">
+			</div>
+			
+			<div class="form-group">
+				<div class="bs-callout bs-callout-info" id="callout-xref-input-group">
+				    <h4>ASR程序路径和参数</h4>
+				    <p>
+				    	<figure class="highlight">
+				    		<pre>
+				    			<code class="language-html" data-lang="html">
+		//ASR程序路径和参数
+		//参数说明
+		//language: 语言
+		//       zh_cn：简体中文
+		//       zh_tw：繁体中文
+		//        en_us：英文
+		//       默认值：zh_cn
+		//accent:   方言
+		//       mandarin：普通话
+		//       cantonese：粤语
+		//       lmz：四川话
+		//       默认值：mandarin	
+				    			</code>
+				    		</pre>
+				    	</figure>	
+				    </p>
+				</div>
+				<textarea class="form-control" rows="3" id="asr-iflytek6-command" placeholder="./iflytek type=${type} appid=${appid} encoding=utf8 language=zh_cn accent=mandarin"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="asr-iflytek6-keylist">keylist: </label>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+				          <th>#</th>
+				          <th>id</th>
+				          <th>
+				          	<a class="btn btn-default v-keylist2-rowadd" href="javascript:;" role="button">添加</a>
+				          </th>
+				        </tr>
+					</thead>
+					<tbody id="asr-iflytek6-keylist">
+						
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</div>
+
+	<h3 id="_3"><input type="checkbox" id="asr-iflytek7"> 讯飞SDK ASR接口7</h3>
+	<div class="bb2 asr-iflytek7-div">
+		<form id="asr-iflytek7-form">			
+			<div class="form-group">
+				<label for="asr-iflytek7-mode">keylist账户选择模式: </label>
+				<span class="label label-warning">顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号</span>
+				<select class="form-control" id="asr-iflytek7-mode">
+				  <option value="0">顺序</option>
+				  <option value="1">轮询</option>
+				</select>
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek7-workdir">iflytek程序所在目录: </label>
+			    <input type="text" class="form-control" id="asr-iflytek7-workdir" placeholder="libmsc.so 也必须放这个目录 （libmsc.so和appid必须对应）">
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek7-responsetimeout">等待识别超时: </label>
+			    <input type="text" class="form-control" id="asr-iflytek7-responsetimeout" placeholder="">
+			</div>
+			
+			<div class="form-group">
+				<div class="bs-callout bs-callout-info" id="callout-xref-input-group">
+				    <h4>ASR程序路径和参数</h4>
+				    <p>
+				    	<figure class="highlight">
+				    		<pre>
+				    			<code class="language-html" data-lang="html">
+		//ASR程序路径和参数
+		//参数说明
+		//language: 语言
+		//       zh_cn：简体中文
+		//       zh_tw：繁体中文
+		//        en_us：英文
+		//       默认值：zh_cn
+		//accent:   方言
+		//       mandarin：普通话
+		//       cantonese：粤语
+		//       lmz：四川话
+		//       默认值：mandarin	
+				    			</code>
+				    		</pre>
+				    	</figure>	
+				    </p>
+				</div>
+				<textarea class="form-control" rows="3" id="asr-iflytek7-command" placeholder="./iflytek type=${type} appid=${appid} encoding=utf8 language=zh_cn accent=mandarin"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="asr-iflytek7-keylist">keylist: </label>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+				          <th>#</th>
+				          <th>id</th>
+				          <th>
+				          	<a class="btn btn-default v-keylist2-rowadd" href="javascript:;" role="button">添加</a>
+				          </th>
+				        </tr>
+					</thead>
+					<tbody id="asr-iflytek7-keylist">
+						
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</div>
+	
+	<h3 id="_3"><input type="checkbox" id="asr-iflytek8"> 讯飞SDK ASR接口8</h3>
+	<div class="bb2 asr-iflytek8-div">
+		<form id="asr-iflytek8-form">			
+			<div class="form-group">
+				<label for="asr-iflytek8-mode">keylist账户选择模式: </label>
+				<span class="label label-warning">顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号</span>
+				<select class="form-control" id="asr-iflytek8-mode">
+				  <option value="0">顺序</option>
+				  <option value="1">轮询</option>
+				</select>
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek8-workdir">iflytek程序所在目录: </label>
+			    <input type="text" class="form-control" id="asr-iflytek8-workdir" placeholder="libmsc.so 也必须放这个目录 （libmsc.so和appid必须对应）">
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek8-responsetimeout">等待识别超时: </label>
+			    <input type="text" class="form-control" id="asr-iflytek8-responsetimeout" placeholder="">
+			</div>
+			
+			<div class="form-group">
+				<div class="bs-callout bs-callout-info" id="callout-xref-input-group">
+				    <h4>ASR程序路径和参数</h4>
+				    <p>
+				    	<figure class="highlight">
+				    		<pre>
+				    			<code class="language-html" data-lang="html">
+		//ASR程序路径和参数
+		//参数说明
+		//language: 语言
+		//       zh_cn：简体中文
+		//       zh_tw：繁体中文
+		//        en_us：英文
+		//       默认值：zh_cn
+		//accent:   方言
+		//       mandarin：普通话
+		//       cantonese：粤语
+		//       lmz：四川话
+		//       默认值：mandarin	
+				    			</code>
+				    		</pre>
+				    	</figure>	
+				    </p>
+				</div>
+				<textarea class="form-control" rows="3" id="asr-iflytek8-command" placeholder="./iflytek type=${type} appid=${appid} encoding=utf8 language=zh_cn accent=mandarin"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="asr-iflytek8-keylist">keylist: </label>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+				          <th>#</th>
+				          <th>id</th>
+				          <th>
+				          	<a class="btn btn-default v-keylist2-rowadd" href="javascript:;" role="button">添加</a>
+				          </th>
+				        </tr>
+					</thead>
+					<tbody id="asr-iflytek8-keylist">
+						
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</div>
+	
+	<h3 id="_3"><input type="checkbox" id="asr-iflytek9"> 讯飞SDK ASR接口9</h3>
+	<div class="bb2 asr-iflytek9-div">
+		<form id="asr-iflytek9-form">			
+			<div class="form-group">
+				<label for="asr-iflytek9-mode">keylist账户选择模式: </label>
+				<span class="label label-warning">顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号</span>
+				<select class="form-control" id="asr-iflytek9-mode">
+				  <option value="0">顺序</option>
+				  <option value="1">轮询</option>
+				</select>
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek9-workdir">iflytek程序所在目录: </label>
+			    <input type="text" class="form-control" id="asr-iflytek9-workdir" placeholder="libmsc.so 也必须放这个目录 （libmsc.so和appid必须对应）">
+			</div>
+			<div class="form-group">
+			    <label for="asr-iflytek9-responsetimeout">等待识别超时: </label>
+			    <input type="text" class="form-control" id="asr-iflytek9-responsetimeout" placeholder="">
+			</div>
+			
+			<div class="form-group">
+				<div class="bs-callout bs-callout-info" id="callout-xref-input-group">
+				    <h4>ASR程序路径和参数</h4>
+				    <p>
+				    	<figure class="highlight">
+				    		<pre>
+				    			<code class="language-html" data-lang="html">
+		//ASR程序路径和参数
+		//参数说明
+		//language: 语言
+		//       zh_cn：简体中文
+		//       zh_tw：繁体中文
+		//        en_us：英文
+		//       默认值：zh_cn
+		//accent:   方言
+		//       mandarin：普通话
+		//       cantonese：粤语
+		//       lmz：四川话
+		//       默认值：mandarin	
+				    			</code>
+				    		</pre>
+				    	</figure>	
+				    </p>
+				</div>
+				<textarea class="form-control" rows="3" id="asr-iflytek9-command" placeholder="./iflytek type=${type} appid=${appid} encoding=utf9 language=zh_cn accent=mandarin"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="asr-iflytek9-keylist">keylist: </label>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+				          <th>#</th>
+				          <th>id</th>
+				          <th>
+				          	<a class="btn btn-default v-keylist2-rowadd" href="javascript:;" role="button">添加</a>
+				          </th>
+				        </tr>
+					</thead>
+					<tbody id="asr-iflytek9-keylist">
+						
+					</tbody>
+				</table>
+			</div>
+		</form>
+	</div>
+
 	<h3>enable列表: </h3>
 	<input type="checkbox" name="asr-enable" value="xfyun"> 科大讯飞
 	<input type="checkbox" name="asr-enable" value="baidu"> 百度语音识别
 	<input type="checkbox" name="asr-enable" value="aliyun"> 阿里云识别引擎
 	<input type="checkbox" name="asr-enable" value="iflytek"> 讯飞SDK ASR接口
-	<input type="checkbox" name="asr-enable" value="iflytek2"> 讯飞SDK ASR接口 第二个APPID
+	<input type="checkbox" name="asr-enable" value="iflytek2"> 讯飞SDK ASR接口2
+	<input type="checkbox" name="asr-enable" value="iflytek3"> 讯飞SDK ASR接口3
+	<input type="checkbox" name="asr-enable" value="iflytek4"> 讯飞SDK ASR接口4
+	<input type="checkbox" name="asr-enable" value="iflytek5"> 讯飞SDK ASR接口5
+	<input type="checkbox" name="asr-enable" value="iflytek6"> 讯飞SDK ASR接口6
+	<input type="checkbox" name="asr-enable" value="iflytek7"> 讯飞SDK ASR接口7
+	<input type="checkbox" name="asr-enable" value="iflytek8"> 讯飞SDK ASR接口8
+	<input type="checkbox" name="asr-enable" value="iflytek9"> 讯飞SDK ASR接口9
 
 	<h3>enable列表里账户选择模式: </h3>
 		<div class="label label-warning">这个mode 指的是 enable列表里账户选择模式。 顺序：就是第一个ASR识别失败的时候才使用下一个</div>
@@ -506,6 +975,10 @@
 		</form>
 	</div>
 
+	<h3>sox程序路径: </h3>
+	<label for="tts-sox">路径: </label>
+    <input type="text" class="form-control" id="tts-sox" placeholder="baidu返回的是mp3格式，用sox命令转换成wav，其他TTS不需要">
+
 	<h3>enable列表: </h3>
 	<input type="checkbox" name="tts-enable" value="baidu"> 百度TTS接口
 	<input type="checkbox" name="tts-enable" value="iflytek"> 讯飞SDK TTS接口
@@ -574,7 +1047,7 @@
 <script src="http://ssdb.io/docs/js/jquery-1.9.1.min.js"></script>
 <script src="http://ssdb.io/docs/js/bootstrap.min.js"></script>
 <script src="j.js"></script>
-<script src="l.js"></script>
+<script src="l.js?<?php echo time()?>"></script>
 <script type="text/html" id="keylist-row1">
 	<tr class="keyrow">
 		<td class="v-index"></td>
