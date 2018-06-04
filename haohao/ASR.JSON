@@ -113,10 +113,10 @@
   "tts": {
       //sox程序路径，baidu返回的是mp3格式，用sox命令转换成wav，其他TTS不需要。
       "sox": "sox",
-      //百度TTS接口
-      
+      //百度TTS接口      
       "baidu": {
-           //0：顺序 1：轮询 ，keylist账户选择模式。 顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号。 
+
+          //0：顺序 1：轮询 ，keylist账户选择模式。 顺序就是第一个账户停用（连续失败次数超过阈值）的时候才会使用第二个账号。 
           "mode": 0,
           // 发音人选择, 0为普通女声，1为普通男生，3为情感合成-度逍遥，4为情感合成-度丫丫，默认为普通女声
           "voice":"",
@@ -175,17 +175,6 @@
               "id": "LTAISeEObGSqPWzN",
               "secret": "QfColjf1yXFwIAD9hYyhlvDKyxnF5U"
           }]
-      },
-    //科大webapiTTS接口，注意是WEBAPI，不是AIUI。
-     "aliyun": {
-        "mode": 0,
-        "voice": "xiaoyun",
-        "connecttimeout": 1000,
-        "responsetimeout": 2000,
-        "keylist": [{
-            "id": "LTAISeEObGSqPWzN",
-            "secret": "QfColjf1yXFwIAD9hYyhlvDKyxnF5U"
-            }]
       },
       //使用那些使用TTS引擎
       "enable": [
