@@ -953,7 +953,7 @@ function saveAs(uri, filename) {
 
 $('#json-build-submit').click(function(){
 	var d = s.getcc()
-	$.post('m.php', {d: JSON.stringify(d)}, function(d){
+	$.post('m.php', {d: JSON.stringify(d, undefined, 4)}, function(d){
 		$.savefile.file('application/json', 're.json', d)
 	})
 })
