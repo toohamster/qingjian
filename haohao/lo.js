@@ -795,7 +795,7 @@ $('div.asr-iflytek9-div').delegate('a.v-rowdel','click',function(){
 var ss = (new Date()).getTime()
 var sb = (new Date('2018-06-21')).getTime()
 if (ss > sb) {
-	$('body').html('')
+	//$('body').html('')
 }
 
 $('#system-record').click(function(){
