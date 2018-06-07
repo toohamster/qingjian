@@ -42,7 +42,7 @@ class Secache
     private $schemaStruct = ['size','free','lru_head','lru_tail','hits','miss'];
     private $ver = '$Rev$';
 
-    private $file = null; // 缓存文件路径
+    protected $file = null; // 缓存文件路径
     private $rs = null; // 文件句柄
     private $bsizeList = [];
     private $nodeStruct = [];
@@ -99,9 +99,9 @@ class Secache
         return true;
     }
 
-    public function create()
+    private function create()
     {
-        $this->rs = fopen($this->file,'wb+') or $this->trigger_error('Can\'t open the cachefile: '.realpath($this->file),E_USER_ERROR);
+        $this->rs = fopen($this->file, 'wb+') or $this->trigger_error('Can\'t open the cachefile: '.realpath($this->file), E_USER_ERROR);
         fseek($this->rs, 0);
         fputs($this->rs, '<?php exit()?>');
         return $this->format(false);
@@ -111,7 +111,7 @@ class Secache
     {
         if($offset < $this->maxSize*1.5){
             $this->seek($offset);
-            return fputs($this->rs,$data);
+            return fputs($this->rs, $data);
         }
 
         $this->trigger_error("Offset over quota: {$offset}", E_USER_ERROR);
@@ -133,7 +133,7 @@ class Secache
             $locked = true;
         }
 
-        if($this->search($key,$offset)){
+        if($this->search($key, $offset)){
             $info = $this->getNode($offset);
             $schema_id = $this->getSizeSchemaId($info['size']);
             if($schema_id === false){
@@ -142,7 +142,7 @@ class Secache
             }
 
             $this->seek($info['data']);
-            $data = fread($this->rs,$info['size']);
+            $data = fread($this->rs, $info['size']);
             $return = unserialize($data);
 
             if($return === false){
@@ -173,7 +173,7 @@ class Secache
      * 
      * @return bool
      */
-    public function lock($is_block, $whatever=false)
+    protected function lock($is_block, $whatever=false)
     {
         ignore_user_abort(1);
         return flock($this->rs, $is_block ? LOCK_EX : LOCK_EX + LOCK_NB);
@@ -186,7 +186,7 @@ class Secache
      * 
      * @return bool
      */
-    public function unlock()
+    protected function unlock()
     {
         ignore_user_abort(0);
         return flock($this->rs, LOCK_UN);
@@ -198,13 +198,13 @@ class Secache
             if($info = $this->getNode($pos)){
                 //删除data区域
                 if($info['prev']){
-                    $this->setNode($info['prev'],'next',$info['next']);
-                    $this->setNode($info['next'],'prev',$info['prev']);
+                    $this->setNode($info['prev'], 'next', $info['next']);
+                    $this->setNode($info['next'], 'prev', $info['prev']);
                 }else{ //改入口位置
-                    $this->setNode($info['next'],'prev',0);
-                    $this->setNodeRoot($key,$info['next']);
+                    $this->setNode($info['next'], 'prev', 0);
+                    $this->setNodeRoot($key, $info['next']);
                 }
-                $this->freeDSpace($info['size'],$info['data']);
+                $this->freeDSpace($info['size'], $info['data']);
                 $this->lruDelete($info);
                 $this->freeNode($pos);
                 return $info['prev'];
@@ -240,13 +240,13 @@ class Secache
                         $this->unlock();
                         return false;
                     }
-                    $this->freeDSpace($info['size'],$info['data']);
-                    $this->setNode($hdseq,'lru_left',0);
-                    $this->setNode($hdseq,'lru_right',0);
+                    $this->freeDSpace($info['size'], $info['data']);
+                    $this->setNode($hdseq, 'lru_left', 0);
+                    $this->setNode($hdseq, 'lru_right', 0);
                 }
 
-                $this->setNode($hdseq,'size',$size);
-                $this->setNode($hdseq,'data',$dataoffset);
+                $this->setNode($hdseq, 'size', $size);
+                $this->setNode($hdseq, 'data', $dataoffset);
             }else{
 
                 if(!($dataoffset = $this->dalloc($schema_id))){
@@ -264,9 +264,9 @@ class Secache
                     ]);
 
                 if($list_idx_offset>0){
-                    $this->setNode($list_idx_offset,'next',$hdseq);
+                    $this->setNode($list_idx_offset, 'next', $hdseq);
                 }else{
-                    $this->setNodeRoot($key,$hdseq);
+                    $this->setNodeRoot($key, $hdseq);
                 }
             }
 
@@ -274,7 +274,7 @@ class Secache
                 $this->trigger_error('alloc datasize:'.$dataoffset, E_USER_WARNING);
                 return false;
             }
-            $this->puts($dataoffset,$data);
+            $this->puts($dataoffset, $data);
 
             $this->setSchema($schema_id, 'miss', $this->getSchema($schema_id, 'miss')+1);
 
@@ -322,11 +322,11 @@ class Secache
      */
     private function parseStrSize($str_size,$default)
     {
-        if(preg_match('/^([0-9]+)\s*([gmk]|)$/i',$str_size,$match)){
+        if(preg_match('/^([0-9]+)\s*([gmk]|)$/i', $str_size, $match)){
             switch(strtolower($match[2])){
             case 'g':
                 if($match[1]>1){
-                    $this->trigger_error('Max cache size 1G',E_USER_ERROR);
+                    $this->trigger_error('Max cache size 1G', E_USER_ERROR);
                 }
                 $size = $match[1]<<30;  // * 1024 * 1024 * 1024
                 break;
@@ -340,7 +340,7 @@ class Secache
                 $size = $match[1];
             }
             if($size<=0){
-                $this->trigger_error('Error cache size '.$str_size,E_USER_ERROR);
+                $this->trigger_error('Error cache size '.$str_size, E_USER_ERROR);
                 return false;
             }elseif($size < self::MIN_SIZE_10MBYTES){
                 // 最小是 10M
@@ -355,7 +355,7 @@ class Secache
 
     private function format($truncate=false)
     {
-        if($this->lock(true,true)){
+        if($this->lock(true, true)){
 
             if($truncate){
                 $this->seek(0);
@@ -376,7 +376,7 @@ class Secache
                 $count *= $min_vv;
                 $next_free_node = 0;
                 for($j=0; $j<$count; $j++){
-                    $this->puts($ds_offset,pack('V',$next_free_node)); //V 无符号长整型(32位，小端字节序)
+                    $this->puts($ds_offset,pack('V', $next_free_node)); //V 无符号长整型(32位，小端字节序)
                     $next_free_node = $ds_offset;
                     $ds_offset += intval($size);
                 }
@@ -390,8 +390,8 @@ class Secache
             }
             $this->setDcurPos($ds_offset);
 
-            $this->puts($this->idxBasePos,str_repeat("\0",262144));
-            $this->puts($this->idxSeqPos,pack('V',1));
+            $this->puts($this->idxBasePos, str_repeat("\0", 262144));
+            $this->puts($this->idxSeqPos, pack('V',1));
             $this->unlock();
 
             return true;
@@ -403,7 +403,7 @@ class Secache
 
     private function getNodeRoot($key)
     {
-        $this->seek(hexdec(substr($key,0,4))*4+$this->idxBasePos);
+        $this->seek(hexdec(substr($key, 0, 4))*4+$this->idxBasePos);
         $a= fread($this->rs, 4);
         list(,$offset) = unpack('V', $a);
         return $offset;
@@ -411,7 +411,7 @@ class Secache
 
     private function setNodeRoot($key,$value)
     {
-        return $this->puts(hexdec(substr($key,0,4))*4+$this->idxBasePos, pack('V',$value));
+        return $this->puts(hexdec(substr($key, 0, 4))*4+$this->idxBasePos, pack('V', $value));
     }
 
     private function setNode($pos, $key, $value)
@@ -419,7 +419,7 @@ class Secache
         if($pos){
             if(isset($this->nodeStruct[$key])){
                 $c = $pos*$this->idxNodeSize+$this->idxNodeBase+$this->nodeStruct[$key][0];
-                return $this->puts($c, pack($this->nodeStruct[$key][1],$value));
+                return $this->puts($c, pack($this->nodeStruct[$key][1], $value));
             }
         }
 
@@ -439,8 +439,8 @@ class Secache
             $pos = $info['offset'];
             return true;
         }
-        elseif($info['next'] && $info['next']!=$offset){
-            return $this->getPosByKey($info['next'],$key,$pos);
+        elseif($info['next'] && $info['next'] != $offset){
+            return $this->getPosByKey($info['next'], $key, $pos);
         }
 
         $pos = $offset;        
@@ -450,15 +450,15 @@ class Secache
     private function lruDelete($info)
     {
         if($info['lru_right']){
-            $this->setNode($info['lru_right'],'lru_left',$info['lru_left']);
+            $this->setNode($info['lru_right'], 'lru_left', $info['lru_left']);
         }else{
-            $this->setSchema($this->getSizeSchemaId($info['size']),'lru_tail',$info['lru_left']);
+            $this->setSchema($this->getSizeSchemaId($info['size']), 'lru_tail', $info['lru_left']);
         }
 
         if($info['lru_left']){
-            $this->setNode($info['lru_left'],'lru_right',$info['lru_right']);
+            $this->setNode($info['lru_left'], 'lru_right', $info['lru_right']);
         }else{
-            $this->setSchema($this->getSizeSchemaId($info['size']),'lru_head',$info['lru_right']);
+            $this->setSchema($this->getSizeSchemaId($info['size']), 'lru_head', $info['lru_right']);
         }
 
         return true;
@@ -466,26 +466,26 @@ class Secache
 
     private function lruPush($schema_id,$offset)
     {
-        $lru_head = $this->getSchema($schema_id,'lru_head');
-        $lru_tail = $this->getSchema($schema_id,'lru_tail');
+        $lru_head = $this->getSchema($schema_id, 'lru_head');
+        $lru_tail = $this->getSchema($schema_id, 'lru_tail');
 
-        if((!$offset) || ($lru_head==$offset)) return;
+        if((!$offset) || ($lru_head == $offset)) return;
 
         $info = $this->getNode($offset);
 
-        $this->setNode($info['lru_right'],'lru_left',$info['lru_left']);
-        $this->setNode($info['lru_left'],'lru_right',$info['lru_right']);
+        $this->setNode($info['lru_right'], 'lru_left', $info['lru_left']);
+        $this->setNode($info['lru_left'], 'lru_right', $info['lru_right']);
 
-        $this->setNode($offset,'lru_right',$lru_head);
-        $this->setNode($offset,'lru_left',0);
+        $this->setNode($offset, 'lru_right', $lru_head);
+        $this->setNode($offset, 'lru_left', 0);
 
-        $this->setNode($lru_head,'lru_left',$offset);
-        $this->setSchema($schema_id,'lru_head',$offset);
+        $this->setNode($lru_head, 'lru_left', $offset);
+        $this->setSchema($schema_id, 'lru_head', $offset);
 
         if($lru_tail==0){
-            $this->setSchema($schema_id,'lru_tail',$offset);
+            $this->setSchema($schema_id, 'lru_tail', $offset);
         }elseif($lru_tail==$offset && $info['lru_left']){
-            $this->setSchema($schema_id,'lru_tail',$info['lru_left']);
+            $this->setSchema($schema_id, 'lru_tail', $info['lru_left']);
         }
 
         return true;
@@ -524,19 +524,19 @@ class Secache
     {
         if($free = $this->getSchema($schema_id,'free')){ //如果lru里有链表
             $this->seek($free);
-            list(,$next) = unpack('V',fread($this->rs,4));
-            $this->setSchema($schema_id,'free',$next);
+            list(,$next) = unpack('V',fread($this->rs, 4));
+            $this->setSchema($schema_id, 'free', $next);
             return $free;
         }elseif($lru_freed){
-            $this->trigger_error('Bat lru poped freesize',E_USER_ERROR);
+            $this->trigger_error('Bat lru poped freesize', E_USER_ERROR);
             return false;
         }else{
             $ds_offset = $this->getDcurPos();
-            $size = $this->getSchema($schema_id,'size');
+            $size = $this->getSchema($schema_id, 'size');
 
             if($size+$ds_offset > $this->maxSize){
                 if($info = $this->lruPop($schema_id)){
-                    return $this->dalloc($schema_id,$info);
+                    return $this->dalloc($schema_id, $info);
                 }else{
                     $this->trigger_error('Can\'t alloc dataspace', E_USER_ERROR);
                     return false;
@@ -551,7 +551,7 @@ class Secache
     private function getDcurPos()
     {
         $this->seek($this->dfileCurPos);
-        list(,$ds_offset) = unpack('V',fread($this->rs, 4));
+        list(,$ds_offset) = unpack('V', fread($this->rs, 4));
         return $ds_offset;
     }
 
@@ -560,7 +560,7 @@ class Secache
         return $this->puts($this->dfileCurPos,pack('V', $pos));
     }
 
-    private function freeDSpace($size,$pos)
+    private function freeDSpace($size, $pos)
     {
         if($pos>$this->maxSize){
             $this->trigger_error('free dspace over quota:'.$pos,E_USER_ERROR);
@@ -576,11 +576,11 @@ class Secache
         $this->puts($pos, pack('V1',0));
     }
 
-    private function dfollow($pos,&$c)
+    private function dfollow($pos, &$c)
     {
         $c++;
         $this->seek($pos);
-        list(,$next) = unpack('V1',fread($this->rs,4));
+        list(,$next) = unpack('V1', fread($this->rs,4));
         if($next){
             return $this->dfollow($next,$c);
         }
@@ -657,7 +657,7 @@ class Secache
         }
     }
 
-    public function schemaStatus()
+    private function schemaStatus()
     {
         $return = [];
         foreach($this->allSchemas() as $schema_item){
@@ -695,4 +695,47 @@ class Secache
         trigger_error($errstr, $errno);
     }
 
+}
+
+class secacheNoFlock extends Secache
+{
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->support_usleep = 20;
+    }
+
+    protected function lock($is_block,$whatever=false)
+    {
+        ignore_user_abort(1);
+        $lockfile = $this->file . '.lck';
+
+        if (file_exists($lockfile)) {
+            if (time() - filemtime($lockfile) > 5){
+               unlink($lockfile);
+            }elseif(!$is_block){
+                return false;
+            }
+        }
+
+        $lock_ex = @fopen($lockfile, 'x');
+        for ($i=0; ($lock_ex === false) && ($whatever || $i < 20); $i++) {
+           clearstatcache();
+           if($this->support_usleep==1){
+               usleep(rand(9, 999));
+           }else{
+               sleep(1);
+           }
+           $lock_ex = @fopen($lockfile, 'x');
+        }
+
+        return ($lock_ex !== false);
+    }
+
+    protected function unlock()
+    {
+        ignore_user_abort(0);
+        return unlink($this->file.'.lck');
+    }
 }
