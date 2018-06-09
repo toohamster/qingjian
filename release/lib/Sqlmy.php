@@ -427,9 +427,27 @@ class sqlmyDataSource
         if ($result === false)
         {
         	$error = $this->db->errorInfo();
+        	
+        	$this->db_error($error);
         	throw new sqlmyError("db query failed: " . print_r(array($this->dsn['id'], $sql, $error),true));
         }
         $this->affected_rows = $result;    	
+    }
+
+    private function db_error($error)
+    {
+    	if (is_array($error)) {
+    		$err_text = "error: " . print_r($error, true);
+    		$this->monitor($err_text);
+    		
+    		// 额外处理数据库链接丢失
+    		$n2 = empty($error[1]) ? '' : $error[1];
+    		$n3 = empty($error[2]) ? '' : strtolower(trim($error[2]));
+
+    		if ($n3 == 'mysql server has gone away') {
+    			$this->close();
+    		}
+    	}
     }
     
     /**
@@ -446,6 +464,7 @@ class sqlmyDataSource
         if ($statement !== false) return $statement;
         
     	$error = $this->db->errorInfo();
+    	$this->db_error($error);
     	throw new sqlmyError("db query failed: " . print_r(array($this->dsn['id'], $sql, $error),true));
     }
     

@@ -421,6 +421,14 @@ class P
     	return false;
     }
 
+    static function reloadRulers()
+    {
+        // 重新加载规则
+        $config = require(dirname(__FILE__).'/config.php');
+
+        self::setRulers($config['ruler']);
+    }
+
 	static function cliMain()
 	{
 		date_default_timezone_set('PRC');
@@ -445,9 +453,11 @@ class P
 
 		for(;;) {
 			try {
+                self::outputln('OOOO: ' . date('Y-m-d H:i:s'));
 
-				self::outputln('OOOO: ' . date('Y-m-d H:i:s'));
-
+                // 重新加载 验证规则
+                self::reloadRulers();
+                
 				// 查询db中活着的代理地址的数量
 				self::fetchAliveProxyData();
 				if (self::checkMustGetAliveProxy()) {
