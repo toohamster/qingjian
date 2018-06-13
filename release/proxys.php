@@ -55,6 +55,9 @@ class P
         	
         	Unirest_Request::proxy($proxy['address'], $proxy['port'], $proxy['type'], $proxy['tunnel']);
         }
+        else {
+            Unirest_Request::proxy(false);
+        }
 
         try {
             switch ($method) {
