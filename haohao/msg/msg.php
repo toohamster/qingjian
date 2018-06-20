@@ -94,16 +94,12 @@ class Msg
 		$url = 'https://server02.dmcld.com:3000/remoteWeb?product_sns=' . $ssss;
 		Unirest_Request::cookie($ccccc);
 		$r = self::curl('get', $url, array());
-
 		$r = json_decode($r->raw_body,true);
-		$b = $r['url'];
-		$p='{"text":"我是仓鼠","port":8,"param":[{"number":"18616256919"}]}';
-		$p='{"text":"我是#param#仓鼠","port":[8],"param":[{"number":"18616256919","text_param":["bj"],"user_id":1}]}';
+        $b = Msg::normalize($r['url'], '?');
+		$p='{"text":"我是#param#仓鼠","port":0,"param":[{"number":"18616256919","text_param":["香港"]},{"number":"13901645759","text_param":["日本"]}]}';
 		$h = array('Content-Type' => 'application/json');
-		$url = $b . '/api/send_sms';
+		$url = $b[0] . '/api/send_sms';
 		$r = self::curl('post', $url, $p, $h);
-
-		Msg::dump($r->code, 'call status');
 
 		return;
 	}
