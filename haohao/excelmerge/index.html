@@ -1,61 +1,108 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Excel Merge | 仓鼠</title>
-<meta name="author" content="toohamster">
-<meta name="viewport" content="initial-scale=1.0,minimum-scale=1,maximum-scale=1,user-scalable=no">
-<style>
-#container{
-	margin: 0 auto;
-	width: 80%;
-}
-#container h1 {
-	text-align: center;
-}
-#oop {
-	border: 1px solid solid;
-	min-height: 300px;
-	background: gray;
-	padding-left: 10px;
-}
-</style>
+	<meta charset="utf-8">
+	<title>Excel Merge | 仓鼠</title>
+	<meta name="author" content="toohamster">
+	<meta name="viewport" content="initial-scale=1.0,minimum-scale=1,maximum-scale=1,user-scalable=no">
+	<link href="http://ssdb.io/docs/css/bootstrap.min.css" rel="stylesheet" />
+	<link href="http://ssdb.io/docs/css/style.css" rel="stylesheet" />
+	<style>
+	#oop {
+		border: 1px solid solid;
+		min-height: 300px;
+		background: gray;
+		padding-left: 10px;
+	}
+	</style>
 </head>
 <body>
-<div id="container">
-	<h1>Excel Merge</h1><br />
-	
-	<p>
-		<label for="xlf1">Excel 1: </label>
-		<input type="file" name="xlfile" id="xlf1" />&nbsp;&nbsp;&nbsp;		
-	</p>
 
-	<p>
-		<label for="xlf2">Excel 2: </label>
-		<input type="file" name="xlfile2" id="xlf2" />&nbsp;&nbsp;&nbsp;		
-	</p>
-
-	<p>
-		关联字段: &nbsp;
-		<select id="sltWb1"></select>
-		&nbsp;&nbsp;VS&nbsp;&nbsp;
-		<select id="sltWb2"></select>
-	</p>
-
-	<p>
-		<input type="button" id="fileParse" value="解析"/>
-		<input type="button" id="fileExport" value="下载"/>
-	</p>
-	<div style="display:none;">
-		useworker<input type="checkbox" name="useworker" checked><br />
-		xferable<input type="checkbox" name="xferable" checked><br />
-		userabs<input type="checkbox" name="userabs" checked><br />
-	</div>
-	<p></p>
-	<div id="oop">
-		<pre id="out"></pre>
+<!-- Fixed navbar -->
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="javascript:;">Excel Merge</a>
+		</div>
+		<div class="navbar-collapse collapse">
+			<ul class="nav navbar-nav navbar-right" style="margin-top: 9px;">
+				<div class="btn-group">
+					<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+						当前语言: 简体中文
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:;">简体中文</a></li>
+					</ul>
+				</div>
+			</ul>
+		</div><!--/.nav-collapse -->
 	</div>
 </div>
+
+<div class="container">
+
+	<p><span class="label label-warning" style="font-size: 120%;">说明</span></p>
+	<div class="alert alert-danger">
+		上传两个Excel文件,根据指定的关联字段进行数据匹配,最终生成合并后的新的Excel文件.<br>
+		<strong>关联字段</strong>设置注意事项: <br>
+		<ul>
+			<li>关联字段的值不能存在空值</li>
+			<li>关联字段的值在数据行中必须唯一</li>
+		</ul>
+	</div>
+	<hr />
+	<div>
+		
+		<div class="form-group">
+		    <label for="xlf1">Excel 1: </label>
+		    <input type="file" id="xlf1">
+		    <p class="help-block">选择第一个Excel 文件.</p>
+	    </div>
+
+	    <div class="form-group">
+		    <label for="xlf1">Excel 2: </label>
+		    <input type="file" id="xlf2">
+		    <p class="help-block">选择第二个Excel 文件.</p>
+	    </div>
+
+	    <div class="form-group">
+		    <label for="xlf1">数据关联字段: </label>
+		    <div class="row">
+		    	<div class="col-xs-4">
+					<select id="sltWb1" class="form-control"></select>
+				</div>
+				<div class="col-xs-1">关联到</div>
+				<div class="col-xs-4">
+					<select id="sltWb2" class="form-control"></select>
+				</div>
+		    </div>
+		    <p class="help-block">指定表1和表2的数据关联字段.</p>
+	    </div>
+
+		<p>
+			<button class="btn btn-primary btn-lg" type="button" id="fileParse">解析</button>
+			<button class="btn btn-primary btn-lg" disabled="disabled" type="button" id="fileExport">下载</button>
+		</p>
+		<div style="display:none;">
+			useworker<input type="checkbox" name="useworker" checked><br />
+			xferable<input type="checkbox" name="xferable" checked><br />
+			userabs<input type="checkbox" name="userabs" checked><br />
+		</div>
+		<p>&nbsp;</p>
+		<div id="oop">
+			<pre id="out"></pre>
+		</div>
+	</div>
+	
+	<p>&nbsp;</p>
+
+	<div class="footer">
+		Copyright &copy; 2018 - 2028 <a href="http://vb2005xu.iteye.com">cangshu</a>. All rights reserved.
+		Updated: 2018-06-26 12:39:48 +0800	</div>
+</div>
+
+
 </body>
 <!-- uncomment the next line here and in xlsxworker.js for encoding support -->
 <script src="js/shim.js"></script>
@@ -65,6 +112,7 @@
 <script src="js/ods.js"></script>
 <script src="js/sxexport.js"></script>
 <script src="js/j.js"></script>
+<script src="js/bs.js"></script>
 <script>
 if (!String.prototype.trim) {
   String.prototype.trim = function () {
