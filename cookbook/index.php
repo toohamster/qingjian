@@ -7,15 +7,17 @@ date_default_timezone_set('Asia/Shanghai');
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>CookBook for cx1934!</title>
-	<meta name="keywords" content="Smartivr json builder" />
-	<meta name="description" content="Smartivr json builder." />
-	<link href="http://ssdb.io/docs/css/bootstrap.min.css" rel="stylesheet" />
-	<link href="http://ssdb.io/docs/css/style.css" rel="stylesheet" />
+	<meta name="keywords" content="CookBook for cx1934!" />
+	<meta name="description" content="CookBook for cx1934!" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="http://ssdb.io/docs/css/bootstrap.min.css" rel="stylesheet" media="all"/>
+	<link href="http://ssdb.io/docs/css/style.css" rel="stylesheet" media="all"/>
 	<style type="text/css">
 		div.bb {padding-left: 25px;}
-		div.bb2 {padding-left: 25px;display: none;}
+		div.bb2 {padding-left: 25px;}
 		div.bb3 {padding-left: 25px;}
 	</style>
+	<link href="autoc/l.css" rel="stylesheet" type="text/css" media="all">
 </head>
 <body>
 
@@ -23,7 +25,7 @@ date_default_timezone_set('Asia/Shanghai');
 <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 	<div class="container">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="javascript:;">CookBook for cx1934! - <?php echo date('Y年第W周')?> 食谱</a>
+			<a class="navbar-brand" href="javascript:;"><?php echo date('Y年第W周')?> 食谱</a>
 		</div>
 		<div class="navbar-collapse collapse">
 			<ul class="nav navbar-nav navbar-right" style="margin-top: 9px;">
@@ -42,10 +44,6 @@ date_default_timezone_set('Asia/Shanghai');
 </div>
 
 <div class="container">
-<p><span class="label label-warning" style="font-size: 120%;">注意</span></p>
-<div class="alert alert-danger">
-	系统每周会自动生成本周食谱
-</div>
 <hr />
 
 <?php
@@ -155,7 +153,7 @@ if (!empty($dayName)) {
 
 <?php foreach($weekFoods as $dayName => $dayFoods):?>
 
-	<h2 id="c-asr"><?php echo $dayFoods;?></h2>
+	<h2 id="c-asr"><?php echo $dayName;?></h2>
 
 	<div class="bb asr-div">
 
@@ -171,16 +169,12 @@ if (!empty($dayName)) {
 			</div>
 			<div class="form-group">
 			    <label>性质: </label>
-			    <span class="label label-primary"><?php echo $foods['nature'];?></span>
+			    <span class="label label-info"><?php echo $foods['nature'];?></span>
 			</div>
+		<?php if(!empty($foods['menus'])):?>
 			<div class="form-group">
 				<label>菜谱: </label>
 				<table class="table table-hover">
-					<thead>
-						<tr>
-				          <th>#</th>
-				        </tr>
-					</thead>
 					<tbody id="asr-xfyun-keylist">
 					<?php foreach($foods['menus'] as $menu):?>
 						<tr>
@@ -190,14 +184,11 @@ if (!empty($dayName)) {
 					</tbody>
 				</table>
 			</div>
+		<?php endif;?>
+		<?php if(!empty($foods['conflicts'])):?>
 			<div class="form-group">
-				<label>相克的实物: </label>
+				<label>相克的食物: </label>
 				<table class="table table-hover">
-					<thead>
-						<tr>
-				          <th>#</th>
-				        </tr>
-					</thead>
 					<tbody id="asr-xfyun-keylist">
 					<?php foreach($foods['conflicts'] as $conflict):?>
 						<tr>
@@ -207,6 +198,7 @@ if (!empty($dayName)) {
 					</tbody>
 				</table>
 			</div>
+		<?php endif;?>
 		</form>
 
 		</div>
@@ -221,13 +213,22 @@ if (!empty($dayName)) {
 <p>&nbsp;</p>
 
 <div class="footer">
-	Copyright &copy; 2018 - 2028 <a href="http://quick.lianzh.com">cangshu</a>. All rights reserved.
+	Copyright &copy; 2018 - 2028 <a href="http://quick.lianzh.com">牵猪的仓鼠&贪吃的耗子</a>. All rights reserved.
 	Updated: 2019-04-27 15:39:48 +0800	</div>
 
 </div> <!-- /container -->
 
 <script src="http://ssdb.io/docs/js/jquery-1.9.1.min.js"></script>
 <script src="http://ssdb.io/docs/js/bootstrap.min.js"></script>
-
+<script type="text/javascript" src="autoc/l.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	AutocJS.init({
+	    article: '.container',
+	    anchors: 'h2,h3',
+	    prefix: 'div.asr-div'
+	});
+});
+</script>
 </body>
 </html>
